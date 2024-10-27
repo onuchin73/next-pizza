@@ -1,4 +1,4 @@
-// File: C:\Users\Anton Onuchin\Documents\GitHub\next-pizza\frontend\app\layout.tsx
+// File: C:\Users\Anton Onuchin\Documents\GitHub\next-pizza\Frontend\app\layout.tsx
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
