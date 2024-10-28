@@ -1,0 +1,4 @@
+﻿dotnet tool install --global dotnet-ef
+
+dotnet ef migrations add init -s .\NextPizza.API -p .\NextPizza.DataAccess\
+dotnet ef database update -s .\NextPizza.API -p .\NextPizza.DataAccess\
