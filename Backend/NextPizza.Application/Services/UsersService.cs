@@ -22,9 +22,9 @@ namespace NextPizza.Application.Services
             return await _usersRepository.Create(users);
         }
 
-        public async Task<long> UpdateUser(long id, string fullName, string email, string password, DateTime createdAt, DateTime updatedAt)
+        public async Task<long> UpdateUser(long id, string fullName, string email, string password, DateTime updatedAt)
         {
-            return await _usersRepository.Update(id, fullName, email, password, createdAt, updatedAt);
+            return await _usersRepository.Update(id, fullName, email, password, updatedAt);
         }
 
         public async Task<long> DeleteUser(long id)

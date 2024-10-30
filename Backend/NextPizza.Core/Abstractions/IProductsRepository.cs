@@ -7,6 +7,6 @@ namespace NextPizza.Core.Abstractions
         Task<long> Create(Products product);
         Task<long> Delete(long id);
         Task<List<Products>> Get();
-        Task<long> Update(long id, string name, string imageUrl, DateTime createdAt, DateTime updatedAt);
+        Task<long> Update(long id, string name, string imageUrl, DateTime updatedAt);
     }
 }

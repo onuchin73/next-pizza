@@ -3,7 +3,7 @@ using NextPizza.Core.Models;
 
 namespace NextPizza.Application.Services
 {
-    public class ProductsService : Core.Abstractions.IProductsService
+    public class ProductsService : IProductsService
     {
         private readonly IProductsRepository _productsRepository;
 
@@ -22,9 +22,9 @@ namespace NextPizza.Application.Services
             return await _productsRepository.Create(product);
         }
 
-        public async Task<long> UpdateProduct(long id, string name, string imageUrl, DateTime createdAt, DateTime updatedAt)
+        public async Task<long> UpdateProduct(long id, string name, string imageUrl, DateTime updatedAt)
         {
-            return await _productsRepository.Update(id, name, imageUrl, createdAt, updatedAt);
+            return await _productsRepository.Update(id, name, imageUrl, updatedAt);
         }
 
         public async Task<long> DeleteProduct(long id)

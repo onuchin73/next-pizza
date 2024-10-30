@@ -7,6 +7,6 @@ namespace NextPizza.Core.Abstractions
         Task<long> Create(Users user);
         Task<long> Delete(long id);
         Task<List<Users>> Get();
-        Task<long> Update(long id, string fullName, string email, string password, DateTime createdAt, DateTime updatedAt);
+        Task<long> Update(long id, string fullName, string email, string password, DateTime updatedAt);
     }
 }

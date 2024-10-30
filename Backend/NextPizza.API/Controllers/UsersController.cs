@@ -21,42 +21,58 @@ namespace NextPizza.API.Controllers
 
             var response = users.Select(b => new UsersResponse(b.Id, b.FullName, b.Email, b.Password, b.CreatedAt, b.UpdatedAt));
 
-            return Ok(response);
+            return Success(response);
         }
 
         [HttpPost]
         public async Task<ActionResult<long>> CreateUser([FromBody] UsersRequest request)
         {
-            var (user, error) = Users.Create(
-                request.Id,
-                request.FullName,
-                request.Email,
-                request.Password,
-                request.createdAt,
-                request.updatedAt);
+            if (string.IsNullOrEmpty(request.FullName))
+                return Fail($"Наименование не должно быть пустым.");
 
-            if (!string.IsNullOrEmpty(error))
+            if (request.FullName.Length > Users.MAX_NAME_LENGTH)
+                return Fail($"Наименование должно быть не более {Users.MAX_NAME_LENGTH} символов.");
+
+            var user = new Users()
             {
-                return BadRequest(error);
-            }
+                FullName = request.FullName,
+                Email = request.Email,
+                Password = request.Password,
+                CreatedAt = DateTime.UtcNow
+            };
 
-            var userId = await _usersService.CreateUser(user);
+            user.Id = await _usersService.CreateUser(user);
 
-            return Ok(userId);
+            return Success(user);
         }
 
-        [HttpPut("{id:guid}")]
+        [HttpPut("{id:long}")]
         public async Task<ActionResult<long>> UpdateUser(long id, [FromBody] UsersRequest request)
         {
-            var userId = await _usersService.UpdateUser(id, request.FullName, request.Email, request.Password, request.createdAt, request.updatedAt);
+            if (string.IsNullOrEmpty(request.FullName))
+                return Fail($"Наименование не должно быть пустым.");
 
-            return Ok(userId);
+            if (request.FullName.Length > Users.MAX_NAME_LENGTH)
+                return Fail($"Наименование должно быть не более {Users.MAX_NAME_LENGTH} символов.");
+
+            var user = new Users()
+            {
+                Id = id,
+                FullName = request.FullName,
+                Email = request.Email,
+                Password = request.Password,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            await _usersService.UpdateUser(user.Id, user.FullName, user.Email, user.Password, user.UpdatedAt);
+
+            return Success(user);
         }
 
-        [HttpDelete("{id:guid}")]
+        [HttpDelete("{id:long}")]
         public async Task<ActionResult<long>> DeleteUser(long id)
         {
-            return Ok(await _usersService.DeleteUser(id));
+            return Success(await _usersService.DeleteUser(id));
         }
     }
 }

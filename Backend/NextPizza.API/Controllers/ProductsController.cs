@@ -21,41 +21,56 @@ namespace NextPizza.API.Controllers
 
             var response = products.Select(b => new ProductsResponse(b.Id, b.Name, b.ImageUrl, b.CreatedAt, b.UpdatedAt));
 
-            return Ok(response);
+            return Success(response);
         }
 
         [HttpPost]
         public async Task<ActionResult<long>> CreateProduct([FromBody] ProductsRequest request)
         {
-            var (product, error) = Products.Create(
-                request.Id,
-                request.Name,
-                request.ImageUrl,
-                request.createdAt,
-                request.updatedAt);
+            if (string.IsNullOrEmpty(request.Name))
+                return Fail($"Наименование не должно быть пустым.");
 
-            if (!string.IsNullOrEmpty(error))
+            if (request.Name.Length > Products.MAX_NAME_LENGTH)
+                return Fail($"Наименование должно быть не более {Products.MAX_NAME_LENGTH} символов.");
+
+            var product = new Products()
             {
-                return BadRequest(error);
-            }
+                Name = request.Name,
+                ImageUrl = request.ImageUrl,
+                CreatedAt = DateTime.UtcNow
+            };
 
-            var productId = await _productsService.CreateProduct(product);
+            product.Id = await _productsService.CreateProduct(product);
 
-            return Ok(productId);
+            return Success(product);
         }
 
-        [HttpPut("{id:guid}")]
+        [HttpPut("{id:long}")]
         public async Task<ActionResult<long>> UpdateProduct(long id, [FromBody] ProductsRequest request)
         {
-            var productId = await _productsService.UpdateProduct(id, request.Name, request.ImageUrl, request.createdAt, request.updatedAt);
+            if (string.IsNullOrEmpty(request.Name))
+                return Fail($"Наименование не должно быть пустым.");
 
-            return Ok(productId);
+            if (request.Name.Length > Products.MAX_NAME_LENGTH)
+                return Fail($"Наименование должно быть не более {Products.MAX_NAME_LENGTH} символов.");
+
+            var product = new Products()
+            {
+                Id = id,
+                Name = request.Name,
+                ImageUrl = request.ImageUrl,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            await _productsService.UpdateProduct(product.Id, product.Name, product.ImageUrl, product.UpdatedAt);
+
+            return Success(product);
         }
 
-        [HttpDelete("{id:guid}")]
+        [HttpDelete("{id:long}")]
         public async Task<ActionResult<long>> DeleteProduct(long id)
         {
-            return Ok(await _productsService.DeleteProduct(id));
+            return Success(await _productsService.DeleteProduct(id));
         }
     }
 }

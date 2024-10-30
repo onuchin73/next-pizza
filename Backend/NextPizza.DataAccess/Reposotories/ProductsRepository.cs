@@ -21,7 +21,14 @@ namespace NextPizza.DataAccess.Reposotories
                 .ToListAsync();
 
             var products = productsEntities
-                .Select(b => Products.Create(b.Id, b.Name, b.ImageUrl, b.CreatedAt, b.UpdatedAt).Product)
+                .Select(b => new Products
+                {
+                    Id = b.Id,
+                    Name = b.Name,
+                    ImageUrl = b.ImageUrl,
+                    CreatedAt = b.CreatedAt,
+                    UpdatedAt = b.UpdatedAt
+                })
                 .ToList();
 
             return products;
@@ -44,14 +51,13 @@ namespace NextPizza.DataAccess.Reposotories
             return productEntity.Id;
         }
 
-        public async Task<long> Update(long id, string name, string imageUrl, DateTime createdAt, DateTime updatedAt)
+        public async Task<long> Update(long id, string name, string imageUrl, DateTime updatedAt)
         {
             await _context.Products
                 .Where(b => b.Id == id)
                 .ExecuteUpdateAsync(s => s
                 .SetProperty(b => b.Name, b => name)
                 .SetProperty(b => b.ImageUrl, b => imageUrl)
-                .SetProperty(b => b.CreatedAt, b => createdAt)
                 .SetProperty(b => b.UpdatedAt, b => updatedAt));
 
             return id;

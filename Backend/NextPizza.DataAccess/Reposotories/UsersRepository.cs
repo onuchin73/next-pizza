@@ -21,7 +21,15 @@ namespace NextPizza.DataAccess.Reposotories
                 .ToListAsync();
 
             var users = usersEntities
-                .Select(b => Users.Create(b.Id, b.FullName, b.Email, b.Password, b.CreatedAt, b.UpdatedAt).User)
+                .Select(b => new Users
+                {
+                    Id = b.Id,
+                    FullName = b.FullName,
+                    Email = b.Email,
+                    Password = b.Password,
+                    CreatedAt = b.CreatedAt,
+                    UpdatedAt = b.UpdatedAt
+                })
                 .ToList();
 
             return users;
@@ -34,8 +42,8 @@ namespace NextPizza.DataAccess.Reposotories
                 Id = user.Id,
                 FullName = user.FullName,
                 Email = user.Email,
-                CreatedAt = user.CreatedAt,
-                UpdatedAt = user.UpdatedAt
+                Password = user.Password,
+                CreatedAt = user.CreatedAt
             };
 
             await _context.Users.AddAsync(userEntity);
@@ -44,7 +52,7 @@ namespace NextPizza.DataAccess.Reposotories
             return userEntity.Id;
         }
 
-        public async Task<long> Update(long id, string fullName, string email, string password, DateTime createdAt, DateTime updatedAt)
+        public async Task<long> Update(long id, string fullName, string email, string password, DateTime updatedAt)
         {
             await _context.Users
                 .Where(b => b.Id == id)
@@ -52,7 +60,6 @@ namespace NextPizza.DataAccess.Reposotories
                 .SetProperty(b => b.FullName, b => fullName)
                 .SetProperty(b => b.Email, b => email)
                 .SetProperty(b => b.Password, b => password)
-                .SetProperty(b => b.CreatedAt, b => createdAt)
                 .SetProperty(b => b.UpdatedAt, b => updatedAt));
 
             return id;
